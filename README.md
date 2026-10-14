@@ -3,7 +3,36 @@
 Camwater setzt Kamera-Watermarks anderer Hersteller auf deine Fotos. Ein Beispiel: Du fotografierst mit deinem Samsung, und unten auf dem
 Foto steht **„vivo X300 Ultra | ZEISS“** mit Brennweite, Blende, Belichtungszeit, ISO und Datum, so wie bei einem echten vivo-Handy.
 
-Die App läuft im Browser (Chrome oder Samsung Internet) und lässt sich wie eine normale App auf den Startbildschirm legen. Deine Fotos werden
+Es gibt Camwater in zwei Varianten:
+
+- **Android-App (APK)**: Ist der Schalter an, bekommt **jedes neue Foto aus deiner Samsung-Kamera automatisch** das Watermark.
+- **Web-App**: läuft im Browser. Dort fotografierst du über den Knopf in der App oder wählst Fotos aus.
+
+## Android-App installieren
+
+1. Auf dem Handy die Seite **[Releases](https://github.com/JP19Claude/Camwater/releases/latest)** öffnen.
+2. Unter *Assets* auf **Camwater.apk** tippen und herunterladen.
+3. Die Datei öffnen. Android fragt beim ersten Mal, ob Chrome „unbekannte Apps installieren“ darf: einmal **erlauben**, dann **Installieren**.
+4. Camwater öffnen, ein Watermark wählen (z.B. *vivo X300 Ultra*) und den **Schalter oben auf AN** stellen.
+   Bei der Frage nach Fotos **„Alle zulassen“** wählen und Benachrichtigungen erlauben.
+5. Ganz normal mit der Samsung-Kamera fotografieren. Ein paar Sekunden später liegt in der Galerie eine **Kopie mit Watermark**
+   (Album *Camwater* oder, wenn du es so einstellst, direkt neben dem Original). Das Original bleibt unverändert.
+
+Tipp: Tippe in der App auf **„Im Hintergrund zuverlässig laufen lassen“**. Samsung schickt Apps sonst gern in den Ruhezustand, und dann
+kommt das Watermark erst, wenn du Camwater wieder öffnest.
+
+Weitere Funktionen der App:
+
+- **Fotos aus der Galerie bearbeiten**: alte Fotos auswählen, auch mehrere auf einmal.
+- In der Samsung-Galerie: Foto(s) auswählen und **Teilen → Camwater** antippen.
+- **Eigene Hersteller hinzufügen** oder die mitgelieferten Vorlagen ändern (lange auf eine Vorlage tippen oder „Bearbeiten“), auch mit eigenem Logo-Bild.
+
+Jede Änderung im Ordner `android/` baut über GitHub Actions automatisch eine neue APK und veröffentlicht sie als neues Release.
+Neue Versionen lassen sich einfach über die alte installieren.
+
+# Web-App
+
+Die Web-App läuft im Browser (Chrome oder Samsung Internet) und lässt sich wie eine normale App auf den Startbildschirm legen. Deine Fotos werden
 nirgendwo hochgeladen, alles passiert direkt auf deinem Handy.
 
 ## So funktioniert's
@@ -86,6 +115,7 @@ Zum Ausprobieren am Computer reicht ein lokaler Webserver im Projektordner, z.B.
 ## Aufbau
 
 ```
+android/              Android-App (Kotlin), wird von .github/workflows/android.yml gebaut
 index.html            Oberfläche
 css/style.css         Design
 js/app.js             Ablauf: Fotos laden, Vorschau, Speichern/Teilen, Editor
