@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Camwater</title>
+    <meta name="description" content="Fügt deinen Fotos Kamera-Watermarks anderer Hersteller hinzu, z.B. vivo X300 Ultra mit ZEISS." />
+    <meta name="theme-color" content="#0b0b0c" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo" aria-hidden="true">
+        <img src="icons/icon.svg" alt="" width="28" height="28" />
+        <span>Camwater</span>
+      </div>
+      <label class="master" title="Watermark an- oder ausschalten">
+        <input type="checkbox" id="wmToggle" role="switch" />
+        <span class="master-track"><span class="master-thumb"></span></span>
+        <span class="master-label">Watermark <b id="wmState">AN</b></span>
+      </label>
+    </header>
+
+    <main>
+      <section class="stage" aria-label="Vorschau">
+        <canvas id="previewCanvas" aria-label="Vorschau des Fotos mit Watermark"></canvas>
+        <div class="stage-note" id="stageNote">Beispielbild – mach ein Foto oder wähle eins aus</div>
+        <div class="stage-off" id="stageOff" hidden>Watermark ist aus</div>
+        <div class="busy" id="busy" hidden><span class="spinner"></span><span id="busyText">Wird bearbeitet …</span></div>
+      </section>
+
+      <section class="actions">
+        <label class="btn btn-shutter" for="cameraInput">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6l1.5 2H20a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3.5L9 4Z" /><circle cx="12" cy="12.5" r="3.6" /></svg>
+          Foto aufnehmen
+        </label>
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
+        <label class="btn" for="galleryInput">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9.5" r="1.8" /><path d="m21 16-5-5-9 9" /></svg>
+          Aus Galerie
+        </label>
+        <input type="file" id="galleryInput" accept="image/*" multiple hidden />
+        <button class="btn" id="saveBtn" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M4 19h16" /></svg>
+          Speichern
+        </button>
+        <button class="btn" id="shareBtn" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5.5" r="2.5" /><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="18.5" r="2.5" /><path d="m8.2 10.8 7.6-4.1M8.2 13.2l7.6 4.1" /></svg>
+          Teilen
+        </button>
+      </section>
+
+      <section class="results" id="results" hidden>
+        <div class="section-head">
+          <h2>Fertige Fotos</h2>
+          <div class="row-gap">
+            <button class="link" id="saveAllBtn" type="button">Alle speichern</button>
+            <button class="link" id="shareAllBtn" type="button">Alle teilen</button>
+          </div>
+        </div>
+        <ul class="result-list" id="resultList"></ul>
+      </section>
+
+      <section class="picker">
+        <div class="section-head">
+          <h2>Watermark wählen</h2>
+          <button class="link" id="editBtn" type="button">Bearbeiten</button>
+        </div>
+        <div class="preset-grid" id="presetGrid" role="listbox" aria-label="Watermark-Vorlagen"></div>
+        <button class="btn btn-add" id="addBtn" type="button">+ Eigene Marke / eigenes Handy hinzufügen</button>
+      </section>
+
+      <details class="settings">
+        <summary>Einstellungen</summary>
+        <div class="settings-body">
+          <label class="check">
+            <input type="checkbox" id="setAutoSave" />
+            <span><b>Automatisch speichern</b><small>Neue Fotos werden sofort mit Watermark gespeichert, wenn der Schalter an ist.</small></span>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="setKeepExif" />
+            <span><b>Fotodaten behalten</b><small>Aufnahmedatum &amp; Kameradaten (EXIF) bleiben in der gespeicherten Datei erhalten.</small></span>
+          </label>
+          <label class="field">
+            <span>JPEG-Qualität <output id="qualityOut"></output></span>
+            <input type="range" id="setQuality" min="0.7" max="1" step="0.01" />
+          </label>
+          <label class="field">
+            <span>Maximale Größe</span>
+            <select id="setMaxMp">
+              <option value="12">12 MP</option>
+              <option value="24">24 MP</option>
+              <option value="50">50 MP</option>
+              <option value="200">Original (bis 200 MP)</option>
+            </select>
+          </label>
+          <div class="field">
+            <span>Vorlagen sichern / teilen</span>
+            <div class="row-gap">
+              <button class="btn btn-small" id="exportBtn" type="button">Exportieren</button>
+              <label class="btn btn-small" for="importInput">Importieren</label>
+              <input type="file" id="importInput" accept="application/json,.json" hidden />
+            </div>
+          </div>
+          <button class="btn btn-small" id="installBtn" type="button" hidden>Als App installieren</button>
+          <p class="hint">
+            Tipp: Installiere Camwater über das Browser-Menü („Zum Startbildschirm hinzufügen“). Dann kannst du Fotos auch direkt aus der
+            Samsung-Galerie über <b>Teilen → Camwater</b> mit Watermark versehen.
+          </p>
+          <p class="hint">
+            Logos werden als Schrift nachgebildet. Marken- und Logonamen gehören ihren jeweiligen Inhabern; Camwater steht in keiner Verbindung
+            zu ihnen. Die Fotodaten in der Datei bleiben die deines echten Handys.
+          </p>
+        </div>
+      </details>
+    </main>
+
+    <dialog id="editor" class="sheet">
+      <form method="dialog" id="editorForm">
+        <div class="sheet-top">
+          <div class="sheet-head">
+            <h2 id="editorTitle">Watermark bearbeiten</h2>
+            <button class="icon-btn" type="button" aria-label="Schließen">✕</button>
+          </div>
+          <canvas id="editorPreview" class="editor-preview" aria-label="Vorschau des Watermarks"></canvas>
+        </div>
+
+        <div class="grid2">
+          <label class="field"><span>Marke</span><input name="brand" placeholder="z.B. vivo" autocomplete="off" /></label>
+          <label class="field">
+            <span>Schrift der Marke</span>
+            <select name="brandStyle">
+              <option value="plain">Normal</option>
+              <option value="bold">Fett</option>
+              <option value="round">Extra fett</option>
+              <option value="wide">Breit / gesperrt</option>
+              <option value="italic">Kursiv</option>
+              <option value="serif">Serifen</option>
+            </select>
+          </label>
+          <label class="field"><span>Modell</span><input name="model" placeholder="z.B. X300 Ultra" autocomplete="off" /></label>
+          <label class="field"><span>Text davor</span><input name="prefix" placeholder="z.B. Shot on" autocomplete="off" /></label>
+        </div>
+
+        <fieldset class="seg">
+          <legend>Stil</legend>
+          <label><input type="radio" name="style" value="frame-split" /><span>Leiste · Logo rechts</span></label>
+          <label><input type="radio" name="style" value="frame-center" /><span>Leiste · mittig</span></label>
+          <label><input type="radio" name="style" value="overlay" /><span>Im Bild</span></label>
+        </fieldset>
+
+        <div class="grid2">
+          <fieldset class="seg">
+            <legend>Farbe</legend>
+            <label><input type="radio" name="theme" value="light" /><span>Hell</span></label>
+            <label><input type="radio" name="theme" value="dark" /><span>Dunkel</span></label>
+          </fieldset>
+          <div class="checks">
+            <label class="check-inline"><input type="checkbox" name="border" /> Rand rundherum</label>
+            <label class="check-inline"><input type="checkbox" name="showDate" /> Datum anzeigen</label>
+          </div>
+        </div>
+
+        <h3>Partner-Logo</h3>
+        <label class="field">
+          <span>Art</span>
+          <select name="badgeType">
+            <option value="none">Kein Logo</option>
+            <option value="box">Schriftfeld (wie ZEISS)</option>
+            <option value="circle">Kreis (wie Leica)</option>
+            <option value="text">Nur Schriftzug (wie HASSELBLAD)</option>
+            <option value="image">Eigenes Bild hochladen</option>
+          </select>
+        </label>
+        <div class="grid2" data-badge="box circle text">
+          <label class="field"><span>Logo-Text</span><input name="badgeText" placeholder="z.B. ZEISS" autocomplete="off" /></label>
+          <label class="field" data-badge="circle text">
+            <span>Logo-Schrift</span>
+            <select name="badgeFont">
+              <option value="">Normal</option>
+              <option value="wide">Breit</option>
+              <option value="serif">Serifen</option>
+              <option value="script">Schreibschrift</option>
+            </select>
+          </label>
+          <label class="field" data-badge="box circle"><span>Hintergrund</span><input type="color" name="badgeBg" /></label>
+          <label class="field" data-badge="box circle"><span>Schriftfarbe</span><input type="color" name="badgeFg" /></label>
+        </div>
+        <div data-badge="image">
+          <label class="btn btn-small" for="logoInput">Logo-Bild wählen (PNG mit transparentem Hintergrund ist am besten)</label>
+          <input type="file" id="logoInput" accept="image/*" hidden />
+        </div>
+
+        <h3>Kameradaten</h3>
+        <fieldset class="seg">
+          <label><input type="radio" name="exifMode" value="photo" /><span>Aus dem Foto</span></label>
+          <label><input type="radio" name="exifMode" value="custom" /><span>Eigener Text</span></label>
+          <label><input type="radio" name="exifMode" value="off" /><span>Aus</span></label>
+        </fieldset>
+        <label class="field">
+          <span id="exifTextLabel">Ersatz, falls das Foto keine Daten hat</span>
+          <input name="exifText" placeholder="23mm  f/1.8  1/120s  ISO100" autocomplete="off" />
+        </label>
+        <label class="field"><span>Eigene Unterzeile (optional)</span><input name="subtitle" placeholder="z.B. dein Name" autocomplete="off" /></label>
+
+        <div class="sheet-actions">
+          <button class="btn btn-danger" type="button" id="deleteBtn">Löschen</button>
+          <button class="btn" type="button" id="duplicateBtn">Kopie als neue Marke</button>
+          <button class="btn btn-primary" value="save" id="saveEditBtn">Speichern</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
