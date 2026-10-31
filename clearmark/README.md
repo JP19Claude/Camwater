@@ -130,7 +130,7 @@ Verständliche Meldungen gibt es unter anderem für:
 ## Grenzen
 
 - Native FFmpeg-Bibliotheken gibt es nur für 64-Bit-Geräte (`arm64-v8a`, `x86_64`). Die APK ist dadurch rund
-  50 MB groß.
+  90 MB groß, weil die FFmpeg-Bibliotheken für beide Architekturen enthalten sind.
 - HDR-Videos (10 Bit) werden als 8-Bit-H.264 (yuv420p) exportiert, ohne Tone-Mapping.
 - Andere Spuren (Untertitel, Datenspuren) werden nicht übernommen, nur das erste Video und alle Tonspuren.
 - Die App hat keine Internet-Berechtigung. Sie ist im Manifest auch für Bibliotheken ausdrücklich entfernt.
