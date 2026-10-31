@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bildrahmen mit gestrichelter Markierung unten rechts und Radier-Funken. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Rahmen -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4"
+        android:pathData="M34,36h40a4,4 0,0 1,4 4v28a4,4 0,0 1,-4 4h-40a4,4 0,0 1,-4 -4v-28a4,4 0,0 1,4 -4z" />
+    <!-- Play-Dreieck -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M47,46l12,8 -12,8z" />
+    <!-- Markierung unten rechts (gestrichelt) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF9EF2E4"
+        android:strokeWidth="2.5"
+        android:pathData="M60,60h4M67,60h4M71,60v4M71,66v1M60,67h4M67,67h4M60,60v7" />
+    <!-- Funke -->
+    <path
+        android:fillColor="#FF9EF2E4"
+        android:pathData="M76,26l1.8,4.2 4.2,1.8 -4.2,1.8 -1.8,4.2 -1.8,-4.2 -4.2,-1.8 4.2,-1.8z" />
+</vector>

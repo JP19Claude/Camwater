@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ClearMark</string>
+
+    <!-- Allgemein -->
+    <string name="action_back">Zurück</string>
+    <string name="action_play">Abspielen</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_ok">OK</string>
+    <string name="action_cancel">Abbrechen</string>
+
+    <!-- Startscreen -->
+    <string name="start_headline">Logo aus Video entfernen</string>
+    <string name="start_description">Wähle ein Video aus, markiere das Logo-Wasserzeichen und exportiere eine bereinigte Kopie. Das Original bleibt unverändert.</string>
+    <string name="start_pick_video">Video auswählen</string>
+    <string name="start_own_content_hint">Nur für eigene Videos und Inhalte, an denen du die Rechte hast.</string>
+
+    <!-- Hinweis beim ersten Start -->
+    <string name="notice_title">Nur für eigene Inhalte</string>
+    <string name="notice_text">ClearMark ist dafür gedacht, Logos und Wasserzeichen aus deinen eigenen Videos zu entfernen, zum Beispiel ein Kamera- oder App-Logo in selbst gedrehten Aufnahmen.\n\nEntferne Wasserzeichen nur aus Inhalten, an denen du die Rechte hast. Bei fremden Videos kann das Entfernen Urheber- oder Markenrechte verletzen.</string>
+    <string name="notice_accept">Verstanden</string>
+    <string name="notice_show">Hinweis anzeigen</string>
+
+    <!-- Editor -->
+    <string name="editor_title">Logo markieren</string>
+    <string name="editor_reset_rect">Zurücksetzen</string>
+    <string name="editor_overlay_description">Markierung des Logos. Zum Verschieben ziehen, zum Ändern der Größe an den Griffen ziehen.</string>
+    <string name="editor_selection_info">Markierung: %1$d × %2$d px an Position %3$d, %4$d</string>
+    <string name="editor_method">Methode</string>
+    <string name="editor_export">Exportieren</string>
+    <string name="editor_preview_failed">Die Vorschau kann dieses Video nicht abspielen. Der Export kann trotzdem funktionieren.</string>
+    <string name="editor_pick_other">Anderes Video auswählen</string>
+    <string name="editor_crop_zoom">Das Bild wird um %1$d %% vergrößert.</string>
+
+    <string name="method_delogo">Delogo</string>
+    <string name="method_crop">Crop</string>
+    <string name="method_blur">Blur</string>
+    <string name="method_delogo_description">Füllt den markierten Bereich aus den umliegenden Pixeln auf. Meist das beste Ergebnis.</string>
+    <string name="method_crop_description">Schneidet den Bildrand mit dem Logo ab und skaliert das Video wieder auf Originalgröße. Das Seitenverhältnis bleibt erhalten.</string>
+    <string name="method_blur_description">Zeichnet den markierten Bereich weich. Ausweichlösung, wenn Delogo sichtbare Spuren hinterlässt.</string>
+
+    <!-- Export -->
+    <string name="export_title">Video wird exportiert</string>
+    <string name="export_progress">%1$d %%</string>
+    <string name="export_hint">Du kannst die App währenddessen verlassen. Der Export läuft im Hintergrund weiter.</string>
+    <string name="export_failed_title">Export fehlgeschlagen</string>
+    <string name="error_details">Details: %1$s</string>
+
+    <!-- Benachrichtigungen -->
+    <string name="notification_channel_name">Export</string>
+    <string name="notification_channel_description">Fortschritt beim Exportieren von Videos</string>
+    <string name="notification_export_running">Video wird exportiert …</string>
+    <string name="notification_export_done">Export abgeschlossen</string>
+    <string name="notification_export_done_text">Tippe hier, um das Video anzusehen und zu speichern.</string>
+    <string name="notification_export_failed">Export fehlgeschlagen</string>
+    <string name="notification_export_failed_text">Tippe hier, um die Details zu sehen.</string>
+
+    <!-- Ergebnis -->
+    <string name="result_title">Ergebnis</string>
+    <string name="result_save">In Galerie speichern</string>
+    <string name="result_saving">Wird gespeichert …</string>
+    <string name="result_saved">Gespeichert in Movies/ClearMark</string>
+    <string name="result_share">Teilen</string>
+    <string name="result_share_chooser">Video teilen</string>
+    <string name="result_new_video">Neues Video</string>
+    <string name="result_storage_permission_denied">Ohne Speicherberechtigung kann das Video nicht in der Galerie gespeichert werden.</string>
+
+    <!-- Fehlermeldungen -->
+    <string name="error_video_unreadable">Das Video kann nicht gelesen werden. Möglicherweise ist die Datei beschädigt oder das Format wird nicht unterstützt.</string>
+    <string name="error_not_enough_storage">Nicht genug freier Speicher. Bitte mach etwas Platz frei und versuche es erneut.</string>
+    <string name="error_ffmpeg">Beim Verarbeiten des Videos ist ein Fehler aufgetreten. Versuche es mit einer anderen Methode oder einer kleineren Markierung.</string>
+    <string name="error_selection_too_large">Die Markierung ist zu groß für „Crop“: Vom Bild bliebe zu wenig übrig. Verkleinere die Markierung oder wähle Delogo oder Blur.</string>
+    <string name="error_unsupported_device">Die Videoverarbeitung wird auf diesem Gerät nicht unterstützt (benötigt ein 64-Bit-Gerät).</string>
+    <string name="error_result_missing">Das exportierte Video ist nicht mehr vorhanden. Bitte exportiere es erneut.</string>
+    <string name="error_save_failed">Das Video konnte nicht in der Galerie gespeichert werden.</string>
+    <string name="error_share_failed">Keine App zum Teilen gefunden.</string>
+    <string name="error_unexpected">Ein unerwarteter Fehler ist aufgetreten.</string>
+</resources>
