@@ -14,6 +14,9 @@ import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
 import androidx.media3.exoplayer.ExoPlayer
 import app.clearmark.clearMarkApp
+import app.clearmark.data.export.ExportManager
+import app.clearmark.data.export.ExportRequest
+import app.clearmark.data.export.ExportState
 import app.clearmark.data.video.VideoInfoRepository
 import app.clearmark.domain.CoordinateMapper
 import app.clearmark.domain.RectEditor
@@ -42,7 +45,15 @@ data class EditorUiState(
     val positionMs: Long = 0L,
     val durationMs: Long = 0L,
     val previewFailed: Boolean = false,
+    /** Fortschritt 0..1, solange ein Export läuft, sonst null. */
+    val exportProgress: Float? = null,
+    /** Fehler des letzten Exports (wird als Dialog angezeigt). */
+    val exportError: AppError? = null,
+    /** Pfad des fertigen Videos; einmaliges Navigationsereignis. */
+    val exportedPath: String? = null,
 ) {
+    val isExporting: Boolean get() = exportProgress != null
+
     /** Markierung in Pixeln des angezeigten Bildes (zur Info für den Nutzer). */
     val displayPixels: PixelRect?
         get() = video?.let { CoordinateMapper.displayRectToDisplayPixels(rect, it) }
@@ -52,6 +63,7 @@ class EditorViewModel(
     application: Application,
     private val savedStateHandle: SavedStateHandle,
     private val videoInfoRepository: VideoInfoRepository,
+    private val exportManager: ExportManager,
 ) : ViewModel() {
 
     private val sourceUri: Uri? = savedStateHandle.get<String>(Routes.ARG_URI)?.let(Uri::parse)
@@ -96,6 +108,7 @@ class EditorViewModel(
 
     init {
         loadVideo()
+        observeExport()
         // Abspielposition für die Seekbar aktuell halten.
         viewModelScope.launch {
             while (isActive) {
@@ -129,6 +142,47 @@ class EditorViewModel(
                 _uiState.update { it.copy(loading = false, loadError = AppError.VideoUnreadable) }
             }
         }
+    }
+
+    private fun observeExport() {
+        viewModelScope.launch {
+            exportManager.state.collect { export ->
+                when (export) {
+                    is ExportState.Running -> _uiState.update { it.copy(exportProgress = export.progress) }
+                    is ExportState.Succeeded -> {
+                        _uiState.update { it.copy(exportProgress = null, exportedPath = export.outputPath) }
+                        exportManager.consumeResult()
+                    }
+                    is ExportState.Failed -> {
+                        _uiState.update { it.copy(exportProgress = null, exportError = export.error) }
+                        exportManager.consumeResult()
+                    }
+                    ExportState.Idle -> _uiState.update { it.copy(exportProgress = null) }
+                }
+            }
+        }
+    }
+
+    fun onExport() {
+        val state = _uiState.value
+        val video = state.video ?: return
+        val uri = sourceUri ?: return
+        if (state.isExporting) return
+        val logo = CoordinateMapper.displayRectToVideoPixels(state.rect, video)
+        player.pause()
+        exportManager.start(ExportRequest(sourceUri = uri, video = video, logo = logo, method = state.method))
+    }
+
+    fun onCancelExport() {
+        exportManager.cancel()
+    }
+
+    fun onExportErrorDismissed() {
+        _uiState.update { it.copy(exportError = null) }
+    }
+
+    fun onResultShown() {
+        _uiState.update { it.copy(exportedPath = null) }
     }
 
     fun onRectChanged(rect: NormalizedRect) {
@@ -185,6 +239,7 @@ class EditorViewModel(
                     application = app,
                     savedStateHandle = createSavedStateHandle(),
                     videoInfoRepository = app.container.videoInfoRepository,
+                    exportManager = app.container.exportManager,
                 )
             }
         }

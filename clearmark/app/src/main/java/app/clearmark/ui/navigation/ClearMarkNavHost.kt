@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.clearmark.ui.editor.EditorScreen
+import app.clearmark.ui.result.ResultScreen
 import app.clearmark.ui.start.StartScreen
 
 object Routes {
@@ -17,6 +18,11 @@ object Routes {
     const val EDITOR = "editor?$ARG_URI={$ARG_URI}"
 
     fun editor(uri: Uri): String = "editor?$ARG_URI=" + Uri.encode(uri.toString())
+
+    const val ARG_PATH = "path"
+    const val RESULT = "result?$ARG_PATH={$ARG_PATH}"
+
+    fun result(path: String): String = "result?$ARG_PATH=" + Uri.encode(path)
 }
 
 @Composable
@@ -36,7 +42,25 @@ fun ClearMarkNavHost() {
                 },
             ),
         ) {
-            EditorScreen(onBack = { navController.popBackStack() })
+            EditorScreen(
+                onBack = { navController.popBackStack() },
+                onExported = { path -> navController.navigate(Routes.result(path)) },
+            )
+        }
+        composable(
+            route = Routes.RESULT,
+            arguments = listOf(
+                navArgument(Routes.ARG_PATH) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+            ),
+        ) {
+            ResultScreen(
+                onBack = { navController.popBackStack() },
+                onNewVideo = { navController.popBackStack(Routes.START, inclusive = false) },
+            )
         }
     }
 }
