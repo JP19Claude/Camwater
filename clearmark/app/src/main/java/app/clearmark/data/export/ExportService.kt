@@ -104,6 +104,12 @@ class ExportService : Service() {
         else -> 0
     }
 
+    /** Android 15+: Zeitlimit für Vordergrunddienste erreicht – Export sauber abbrechen. */
+    override fun onTimeout(startId: Int, fgsType: Int) {
+        manager.cancel()
+        stopForegroundAndSelf()
+    }
+
     override fun onDestroy() {
         scope.cancel()
         super.onDestroy()

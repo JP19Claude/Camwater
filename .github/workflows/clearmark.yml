@@ -35,6 +35,13 @@ jobs:
         working-directory: clearmark
         run: ./gradlew --no-daemon --stacktrace assembleDebug
 
+      - name: Berechtigungen der APK anzeigen
+        working-directory: clearmark
+        run: |
+          manifest=$(find app/build/intermediates -path '*merged_manifest*' -name AndroidManifest.xml | grep -i debug | head -1)
+          echo "Zusammengeführtes Manifest: $manifest"
+          grep -o 'uses-permission[^>]*android:name="[^"]*"' "$manifest" | sed 's/.*android:name=//' | sort -u
+
       - name: Testberichte hochladen
         if: always()
         uses: actions/upload-artifact@v7

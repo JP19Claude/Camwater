@@ -119,4 +119,5 @@ Verständliche Meldungen gibt es unter anderem für:
   50 MB groß.
 - HDR-Videos (10 Bit) werden als 8-Bit-H.264 (yuv420p) exportiert, ohne Tone-Mapping.
 - Andere Spuren (Untertitel, Datenspuren) werden nicht übernommen, nur das erste Video und alle Tonspuren.
-- Die App fordert keine Internet-Berechtigung an. Alles läuft lokal auf dem Gerät.
+- Die App hat keine Internet-Berechtigung. Sie ist im Manifest auch für Bibliotheken ausdrücklich entfernt.
+  Alles läuft lokal auf dem Gerät.
