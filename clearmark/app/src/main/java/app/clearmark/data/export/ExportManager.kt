@@ -13,6 +13,7 @@ import app.clearmark.domain.AudioMode
 import app.clearmark.domain.ExportCommand
 import app.clearmark.domain.FfmpegCommandBuilder
 import app.clearmark.domain.FfmpegFailureClassifier
+import app.clearmark.domain.SelectionTooLargeException
 import app.clearmark.domain.StorageEstimator
 import app.clearmark.domain.model.AppError
 import app.clearmark.domain.model.PixelRect
@@ -119,16 +120,20 @@ class ExportManager(
                 return ExportState.Failed(AppError.VideoUnreadable)
             }
 
-            val arguments = FfmpegCommandBuilder.build(
-                ExportCommand(
-                    input = input,
-                    output = output.absolutePath,
-                    video = request.video,
-                    logo = request.logo,
-                    method = request.method,
-                    audioMode = audioMode,
-                ),
-            )
+            val arguments = try {
+                FfmpegCommandBuilder.build(
+                    ExportCommand(
+                        input = input,
+                        output = output.absolutePath,
+                        video = request.video,
+                        logo = request.logo,
+                        method = request.method,
+                        audioMode = audioMode,
+                    ),
+                )
+            } catch (e: SelectionTooLargeException) {
+                return ExportState.Failed(AppError.SelectionTooLarge)
+            }
 
             val outcome = runner.execute(arguments, request.video.durationMs) { progress ->
                 if (_state.value is ExportState.Running) _state.value = ExportState.Running(progress)

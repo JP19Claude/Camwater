@@ -19,6 +19,7 @@ import app.clearmark.data.export.ExportRequest
 import app.clearmark.data.export.ExportState
 import app.clearmark.data.video.VideoInfoRepository
 import app.clearmark.domain.CoordinateMapper
+import app.clearmark.domain.FfmpegCommandBuilder
 import app.clearmark.domain.RectEditor
 import app.clearmark.domain.model.AppError
 import app.clearmark.domain.model.NormalizedRect
@@ -57,6 +58,22 @@ data class EditorUiState(
     /** Markierung in Pixeln des angezeigten Bildes (zur Info für den Nutzer). */
     val displayPixels: PixelRect?
         get() = video?.let { CoordinateMapper.displayRectToDisplayPixels(rect, it) }
+
+    /** Markierung in Pixeln des codierten Bildes, so wie FFmpeg sie bekommt. */
+    val videoPixels: PixelRect?
+        get() = video?.let { CoordinateMapper.displayRectToVideoPixels(rect, it) }
+
+    /**
+     * Nur bei Crop: Vergrößerung in Prozent, oder null, wenn die Markierung zu groß ist.
+     * (Prozentwert ist in beiden Achsen gleich, da das Seitenverhältnis erhalten bleibt.)
+     */
+    val cropZoomPercent: Int?
+        get() {
+            val v = video ?: return null
+            val logo = videoPixels ?: return null
+            val window = FfmpegCommandBuilder.cropWindow(logo, v.codedWidth, v.codedHeight) ?: return null
+            return FfmpegCommandBuilder.cropZoomPercent(window, v.codedWidth)
+        }
 }
 
 class EditorViewModel(
@@ -169,6 +186,12 @@ class EditorViewModel(
         val uri = sourceUri ?: return
         if (state.isExporting) return
         val logo = CoordinateMapper.displayRectToVideoPixels(state.rect, video)
+        if (state.method == RemovalMethod.CROP &&
+            FfmpegCommandBuilder.cropWindow(logo, video.codedWidth, video.codedHeight) == null
+        ) {
+            _uiState.update { it.copy(exportError = AppError.SelectionTooLarge) }
+            return
+        }
         player.pause()
         exportManager.start(ExportRequest(sourceUri = uri, video = video, logo = logo, method = state.method))
     }

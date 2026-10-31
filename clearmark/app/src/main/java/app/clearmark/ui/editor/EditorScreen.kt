@@ -56,6 +56,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.clearmark.R
 import app.clearmark.domain.model.AppError
+import app.clearmark.domain.model.RemovalMethod
 import app.clearmark.ui.common.details
 import app.clearmark.ui.common.message
 
@@ -206,6 +207,18 @@ private fun ColumnScope.EditorPanel(state: EditorUiState, viewModel: EditorViewM
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        if (state.method == RemovalMethod.CROP) {
+            val zoom = state.cropZoomPercent
+            Text(
+                text = if (zoom != null) {
+                    stringResource(R.string.editor_crop_zoom, zoom)
+                } else {
+                    stringResource(R.string.error_selection_too_large)
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = if (zoom != null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+            )
+        }
         Spacer(Modifier.height(4.dp))
         Button(
             onClick = onExport,

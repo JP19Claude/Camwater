@@ -125,3 +125,9 @@ js/exif.js            Liest Kameradaten aus dem JPEG und übernimmt sie ins neue
 sw.js                 Offline-Modus und „Teilen → Camwater“
 manifest.webmanifest  App-Name, Icons, Teilen-Ziel
 ```
+
+# ClearMark (Android)
+
+Im Ordner [`clearmark/`](clearmark/) liegt eine zweite, eigenständige Android-App: **ClearMark** entfernt eine feste
+Logo-Fläche (z. B. ein Kamera-Logo unten rechts) aus **eigenen Videos**, wahlweise per Delogo, Crop oder Blur.
+Build-Anleitung und technische Details: [clearmark/README.md](clearmark/README.md).
