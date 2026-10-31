@@ -3,6 +3,15 @@
 Android-App, die eine feste Logo-Wasserzeichen-Fläche (z. B. ein Kamera- oder App-Logo unten rechts) aus
 **eigenen Videos** entfernt. Kotlin, Jetpack Compose (Material 3), minSdk 26, targetSdk 36.
 
+## Download
+
+**[ClearMark.apk herunterladen](https://github.com/JP19Claude/Camwater/releases/download/clearmark-latest/ClearMark.apk)**
+(direkter Link, immer die neueste Version)
+
+Auf dem Handy öffnen und installieren. Beim ersten Mal fragt Android, ob der Browser „unbekannte Apps
+installieren“ darf: einmal erlauben. Neue Versionen lassen sich einfach über die alte installieren.
+Benötigt ein 64-Bit-Gerät mit Android 8 oder neuer.
+
 > **Hinweis:** ClearMark ist nur für eigene Inhalte gedacht. Entferne Wasserzeichen ausschließlich aus Videos,
 > an denen du die Rechte hast. Die App zeigt diesen Hinweis beim ersten Start an.
 
@@ -40,7 +49,12 @@ Alternativ das Projekt `clearmark/` in Android Studio öffnen und starten.
 
 Jeder Push mit Änderungen in `clearmark/` startet den Workflow
 [`.github/workflows/clearmark.yml`](../.github/workflows/clearmark.yml). Er führt die Unit-Tests aus, baut die
-Debug-APK und legt sie als Artefakt **ClearMark-debug-apk** am Workflow-Lauf ab.
+APK und veröffentlicht sie als Release mit dem festen Tag `clearmark-latest`. Dadurch bleibt der Download-Link
+oben immer gleich. Das „Latest“-Release des Repositorys (Camwater) bleibt dabei unverändert.
+
+Signiert wird mit dem festen Schlüssel `app/clearmark.keystore`, damit Updates sich über die alte Version
+installieren lassen. Der Schlüssel liegt wie bei Camwater im Repository und schützt deshalb nicht vor
+nachgebauten APKs. Für eine Veröffentlichung im Play Store wäre ein geheimer Schlüssel nötig.
 
 ## Technik
 

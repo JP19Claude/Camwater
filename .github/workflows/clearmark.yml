@@ -7,6 +7,10 @@ on:
       - ".github/workflows/clearmark.yml"
   workflow_dispatch:
 
+# Zum Veröffentlichen der APK als GitHub-Release.
+permissions:
+  contents: write
+
 concurrency:
   group: clearmark-${{ github.ref }}
   cancel-in-progress: true
@@ -31,14 +35,14 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon --stacktrace testDebugUnitTest
 
-      - name: Debug-APK bauen
+      - name: APKs bauen
         working-directory: clearmark
-        run: ./gradlew --no-daemon --stacktrace assembleDebug
+        run: ./gradlew --no-daemon --stacktrace assembleDebug assembleRelease
 
       - name: Berechtigungen der APK anzeigen
         working-directory: clearmark
         run: |
-          manifest=$(find app/build/intermediates -path '*merged_manifest*' -name AndroidManifest.xml | grep -i debug | head -1)
+          manifest=$(find app/build/intermediates -path '*merged_manifest*' -name AndroidManifest.xml | grep -i release | head -1)
           echo "Zusammengeführtes Manifest: $manifest"
           grep -o 'uses-permission[^>]*android:name="[^"]*"' "$manifest" | sed 's/.*android:name=//' | sort -u
 
@@ -50,8 +54,35 @@ jobs:
           path: clearmark/app/build/reports/tests/
           if-no-files-found: ignore
 
+      - name: APK bereitlegen
+        run: cp clearmark/app/build/outputs/apk/release/app-release.apk ClearMark.apk
+
       - name: APK hochladen
         uses: actions/upload-artifact@v7
         with:
-          name: ClearMark-debug-apk
-          path: clearmark/app/build/outputs/apk/debug/*.apk
+          name: ClearMark-apk
+          path: ClearMark.apk
+
+      # Immer dasselbe Tag, damit der Download-Link gleich bleibt:
+      # https://github.com/<owner>/<repo>/releases/download/clearmark-latest/ClearMark.apk
+      # --latest=false: Das „Latest“-Release (Camwater) bleibt unverändert.
+      - name: Als Release veröffentlichen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: clearmark-latest
+        run: |
+          gh release delete "$TAG" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag || true
+          cat > notes.md <<'NOTES'
+          **Direkter Download:** unten unter *Assets* auf **ClearMark.apk** tippen.
+
+          **Installieren:** Datei öffnen. Beim ersten Mal fragt Android, ob der Browser „unbekannte Apps installieren“ darf – einmal erlauben.
+          Neue Versionen lassen sich einfach über die alte installieren. Benötigt ein 64-Bit-Gerät mit Android 8 oder neuer.
+
+          **Hinweis:** ClearMark ist nur für eigene Videos gedacht. Entferne Wasserzeichen nur aus Inhalten, an denen du die Rechte hast.
+          NOTES
+          gh release create "$TAG" ClearMark.apk \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "ClearMark 1.0.${{ github.run_number }}" \
+            --notes-file notes.md \
+            --latest=false

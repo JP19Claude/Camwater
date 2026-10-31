@@ -130,4 +130,5 @@ manifest.webmanifest  App-Name, Icons, Teilen-Ziel
 
 Im Ordner [`clearmark/`](clearmark/) liegt eine zweite, eigenständige Android-App: **ClearMark** entfernt eine feste
 Logo-Fläche (z. B. ein Kamera-Logo unten rechts) aus **eigenen Videos**, wahlweise per Delogo, Crop oder Blur.
-Build-Anleitung und technische Details: [clearmark/README.md](clearmark/README.md).
+**[ClearMark.apk herunterladen](https://github.com/JP19Claude/Camwater/releases/download/clearmark-latest/ClearMark.apk)**
+(direkter Link). Build-Anleitung und technische Details: [clearmark/README.md](clearmark/README.md).

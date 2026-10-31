@@ -26,6 +26,17 @@ android {
         }
     }
 
+    // Fester Schlüssel, damit jede neue APK als Update über die alte installiert werden kann
+    // (gleiches Vorgehen wie bei der Camwater-App in diesem Repository).
+    signingConfigs {
+        create("release") {
+            storeFile = file("clearmark.keystore")
+            storePassword = "clearmark"
+            keyAlias = "clearmark"
+            keyPassword = "clearmark"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -33,6 +44,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
